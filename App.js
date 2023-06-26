@@ -1,39 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './pages/Home'
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import DetailFilm from './pages/DetailFilm'
+import Header from './components/header'
 
+const globalState = {
+  totalLike : 0
+}
+
+const rootReducer = (state = globalState, action) => {
+  switch (action.type) {
+    case 'PLUS_LIKE':
+      return { totalLike: state.totalLike + 1 }
+    case 'MINUS_LIKE':
+      return { totalLike: state.totalLike - 1 }
+    default:
+      return state
+  }
+}
+
+const storeRedux = createStore(rootReducer);
 
 const Stack = createNativeStackNavigator();
 
-function Navigator() {
+export default function App() {  
+
   return (
+    <Provider store={storeRedux}>
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Detail" component={DetailFilm} />
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
-
-export default function App() {
-
-  const [count, setCount] = useState(0)
-
-  return (
-
-    <View style={styles.container}>
-      <Text>test 123</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
